@@ -1,18 +1,15 @@
 ---
 layout: page
-title: Welcome to Lagrange!
+title: Noorvir Aulakh
 ---
 
-Lagrange is a minimalist Jekyll theme. The purpose of this theme is to provide a simple, clean, content-focused blogging platform for your personal site or blog. Below you can find everything you need to get started.
+I am primarily interested 3D computer vision, visual SLAM and Human-Computer-Interaction. I currently work at Micropsi-Industries in Berlin on making robots to perform tasks involving hand-eye coordination using imitation learning. My focus is on using as little demonstration data as possible. 
 
-### Getting Started
+Prior to my current job, I studied Robotics and Computation at the University College London and interned at Tesla as a Software Developer in the Industrial Engineering Department.
 
-[Getting Started]({{ site.github.url }}{% post_url 2015-10-10-getting-started %}): getting started with installing Lagrange, whether you are completely new to using Jekyll, or simply just migrating to a new Jekyll theme.
+In my free time, I like to think about Geometric and Semantic SLAM. In my other free time, I also like to run, read, play tennis and boulder. Hit me up if you're in town and want to do one of these things!
 
-### Example Content
 
-[Text and Formatting]({{ site.github.url }}{% post_url 2014-01-01-text-formatting-examples %})
+## This Blog
 
-### Questions?
-
-This theme is completely free and open source software. You may use it however you want, as it is distributed under the [MIT License](http://choosealicense.com/licenses/mit/). If you are having any problems, any questions or suggestions, feel free to [tweet at me](https://twitter.com/intent/tweet?text=My%question%about%Lagrange%is:%&amp;via=paululele), or [file a GitHub issue](https://github.com/lenpaul/lagrange/issues/new).
+I started this blog primarily as a tool to collect my thoughts (both technical and otherwise). I think trying to formalise concepts and explain them to other people is one of the best ways to understand them better yourselves. The posts herein are an attempt at that. If you find something questionable/disagree with some/all of the content, please get in touch! I'd love to hear from your opinion :)

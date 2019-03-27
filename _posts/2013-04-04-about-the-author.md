@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "About the Author"
-author: "Paul Le"
+title: "About"
+author: "Noorvir Aulakh"
 categories: journal
 tags: [documentation,sample]
 image: cutting.jpg

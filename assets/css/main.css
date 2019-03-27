@@ -22,6 +22,7 @@ body {
   font-size: 18px;
   color: #515151;
   line-height: 1.75rem;
+  text-align: justify;
 }
 
 @media (max-width: 30em) {
@@ -82,7 +83,8 @@ hr {
 .container {
   margin-left: auto;
   margin-right: auto;
-  width: 615px;
+  width: 50%;
+
 }
 
 /*48em*/
@@ -353,6 +355,24 @@ table, th, td {
 th, td {
   padding: 15px;
   text-align: left;
+}
+
+/*
+Alignment Tables
+*/
+
+.table_align {
+  /* border-collapse: collapse; */
+  margin-bottom: 0px;
+  width: auto;
+  text-align: center;
+  border: none;
+}
+
+.table_align td tr{
+  text-align: center;
+  border: none;
+  width: auto;
 }
 
 /*
