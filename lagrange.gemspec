@@ -3,10 +3,10 @@
 Gem::Specification.new do |spec|
   spec.name          = "lagrange"
   spec.version       = "3.0.7"
-  spec.authors       = ["Paul Le"]
-  spec.email         = ["l.nguyen.paul@gmail.com"]
+  spec.authors       = ["Noorvir Aulakh"]
+  spec.email         = ["noorvir.aulakh@gmail.com"]
 
-  spec.summary       = "A minimalist Jekyll theme for running a personal blog."
+  # spec.summary       = ""
   spec.homepage      = "https://github.com/LeNPaul/Lagrange"
   spec.license       = "MIT"
 

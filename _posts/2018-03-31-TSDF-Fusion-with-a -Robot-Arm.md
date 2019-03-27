@@ -1,6 +1,7 @@
 ---
 layout: post
 title: TSDF-Fusion with a  Robot Arm
+# image: tsdf/3D_recon.png
 ---
 
 
@@ -60,7 +61,7 @@ We use a PMD [pico flexx](https://pmdtec.com/picofamily/flexx/) depth camera fix
 | Primesense  Carmine| -  |  0.3 - 3.5 | 30  | 180 x 25 x 35|
 
 
-Our use case in particular requires operating between 0.15 - 3 meters from the object surface which, along with its small form factor, is the primary motivator for pico flexx. It however does not come with an in-built RGB camera, so you'd need to do a manual calibration (which might be a deal breaker for some).
+Our use case in particular requires operating between 0.15 - 3 meters from the object surface, which the pico flexx is ideal for. It however does not come with an in-built RGB camera, so you'd need to manually calibrate a separate RGB camera (which might be a deal breaker for some).
 
 ## Camera Calibration
 
@@ -152,7 +153,7 @@ Applying the camera matrix in equation 1 above normalises the camera model: yiel
 *Figure 2: Pinhole Camera Model.*
 
 
-In addition to the projection parameters, the formation of an image on the camera’s pixel array is also affected by the “focusing” effect of the lens - which a pinhole model ignores. These can be summarised with a set of radial $$(k_1, k_2, k_3)$$ and tangential $$(p_1, p_2)$$ [distortion coefficients](https://www.mathworks.com/help/vision/ug/camera-calibration.html#bu0nj3f). Is applied after normalising (perspective projection $$\mathbf{x \rightarrow}\mathbf{x'}$$) the 3D point but before the pin-hole projection (the action of $$\mathbf{K}$$).
+In addition to the projection parameters, the formation of an image on the camera’s pixel array is also affected by the “focusing” effect of the lens - which a pinhole model ignores. These can be summarised with a set of radial $$(k_1, k_2, k_3)$$ and tangential $$(p_1, p_2)$$ [distortion coefficients](https://www.mathworks.com/help/vision/ug/camera-calibration.html#bu0nj3f). Distortion correction is applied after normalising (perspective projection $$\mathbf{x \rightarrow}\mathbf{x'}$$) the 3D point but before the pin-hole projection (the action of $$\mathbf{K}$$).
 
 $$
 
@@ -198,7 +199,7 @@ $$
 
 <br>
 
-You can now get the pixel projections $$(u, v)$$ by replacing $$(x, y)$$ in equation $$\eqref{eq:two}$$ and $$\eqref{eq:three}$$ by $$(\hat x, \hat y)$$. The problem of intrinsics calibration therefore is to estimate the following parameters: {$$\phi_x, \phi_y, \delta_x, \delta_y, \gamma, k_1, k_2, k_3, p_1, p_2$$}.
+Where $$r^2 = x^2 + y^2$$. You can now get the pixel projections $$(u, v)$$ by replacing $$(x, y)$$ in equation $$\eqref{eq:two}$$ and $$\eqref{eq:three}$$ by $$(\hat x, \hat y)$$. The problem of intrinsics calibration therefore is to estimate the following parameters: {$$\phi_x, \phi_y, \delta_x, \delta_y, \gamma, k_1, k_2, k_3, p_1, p_2$$}.
 
 
 Intrinsics calibration is a fairly standard procedure; you can find a step-by-step tutorial [here](https://docs.opencv.org/3.4.3/dc/dbb/tutorial_py_calibration.html).
@@ -257,7 +258,7 @@ for world_point, img_point in zip(world_points, img_points):
 
 Unlike the case for a SLAM problem, we do not want to estimate the global pose of the camera at every time step. Instead, we want to estimate the extrinsic transformation of the camera’s optical center relative to its mounting point on the robot arm.
 
-At first glance, having a 3D CAD model of the camera-mount might appear to obviate the need for such a calibration. Unfortunately, in practice even small misalignments compound as a function of distance when rotations are involved as visualised by *Figure 4* below.
+At first glance, having a 3D CAD model of the camera-mount might appear to obviate the need for such a calibration. Unfortunately, in practice even small misalignments compound as a function of distance when rotations are involved, as visualised by *Figure 4* below.
 
 
 ![alt The concept behind TSDF fusion ][rotation_compounding]
@@ -267,11 +268,11 @@ At first glance, having a 3D CAD model of the camera-mount might appear to obvia
 *Figure 4: The compounding effect of small misalignments on rays of light.*
 
 
-The ```cv2.calibrateCamera``` method from the code snippet above simultaneously solves for both intrinsics and extrinsics, which are returned in axis-angle representation (`rvecs`, `tvecs`). In practice you get slightly better results if you carry out a second calibration of extrinsics. In particular, you can now use [RANSAC](https://en.wikipedia.org/wiki/Random_sample_consensus) and ignore the possible effect of outliers.
+The ```cv2.calibrateCamera``` method from the code snippet above simultaneously solves for both intrinsics and extrinsics, which are returned in axis-angle representation (`rvecs`, `tvecs`). In practice you get slightly better results if you carry out a second calibration of the extrinsics. In particular, you can now use [RANSAC](https://en.wikipedia.org/wiki/Random_sample_consensus) and ignore the possible effect of outliers.
 
 ### Extrinsics Kinematic Chain
 
-Solving the extrinsics optimisation gives us the 6 DoF transformation between the camera and the origin of the chessboard pattern $$T^{cb}_{cam}$$. We still do not know how the camera (which is so far floating around in space) is orientated with respect to the robot arm $$T^{cam}_{ra}$$. The missing link is pose of the chessboard with respect to the global (robot) reference frame $$T^{cb}_W$$. Once we know this transformation, estimating the camera pose with respect to this reference frame simply amounts to a chain of rigid transformations:
+Solving the extrinsics optimisation gives us the 6 DoF transformation between the camera and the origin of the chessboard pattern $$T^{cb}_{cam}$$. We still do not know how the camera (which is so far floating around in space) is orientated with respect to the robot arm $$T^{cam}_{ra}$$. The missing link is the pose of the chessboard with respect to the global (robot) reference frame $$T^{cb}_W$$. Once we know this transformation, estimating the camera pose with respect to this reference frame simply amounts to a chain of rigid transformations:
 
 $$
 T^{cam}_{W} = \underbrace{
@@ -279,8 +280,6 @@ T^{cam}_{W} = \underbrace{
                }_{T^{cb}_{W }}
                \cdot T^{cam}_{cb}
 $$
-
-<br>
 
 Where the notation $$T^a_b \cdot \vec{v}$$ denotes the rigid 6-DoF transformation required to transform a vector $$\vec{v}$$ from reference frame $$a$$ to an arbitrary frame $$b$$.
 
@@ -307,7 +306,7 @@ We now finally have all the ingredients to start fusing some TSDFs!
 
 While we’re not going to go into the implementation details of TSDF-Fusion, let’s have a quick theoretical overview to understand what’s happening under-the-hood, so that you can debug when things go awry.
 
-As we briefly discussed in the first section, our aim is to combine a number of depth images taken from known camera poses into a 3D reconstruction.  Since images taken from different vantage points might not align exactly (*Figure 11b*), we take the weighted average of multiple independent surface measurements. The [original paper](https://graphics.stanford.edu/papers/volrange/volrange.pdf) introducing the technique gives a relatively comprehensible explanation.
+As we briefly discussed in the first section, our aim is to combine a number of depth images taken from known camera poses into a 3D reconstruction.  Since images taken from different vantage points might not align exactly (*Figure 6b*), we take the weighted average of multiple independent surface measurements. The [original paper](https://graphics.stanford.edu/papers/volrange/volrange.pdf) introducing the technique gives a relatively comprehensible explanation.
 
 ![alt The concept behind TSDF fusion ][tsdf_concept]
 *Figure 6: Visualing the concept behind averaging two measured surfaces to fuse them into one. Curless, B., & Levoy, M. (1996)*
@@ -501,7 +500,7 @@ Given ```cmap``` we first ignore all pixel that lie outside the image boundaries
 
 #### Edge Case (literally)
 
-Next we consider regions that lie around object edges. To detect these, we compute the [*Laplacian*](https://en.wikipedia.org/wiki/Discrete_Laplace_operator) of the source image (```cv::Laplacian```). Technically the Laplacian is the divergence of the gradient at each pixel but it is approximated to a discrete 2D grid using a convolution with a 3 x 3 kernel:
+Next we consider regions that lie around object edges. To detect these, we compute the [*Laplacian*](https://en.wikipedia.org/wiki/Discrete_Laplace_operator) of the source image (```cv::Laplacian```). Technically the Laplacian is the divergence of the gradient at each pixel. On a discrete 2D grid it is approximated using a convolution with a 3 x 3 kernel:
 
 $$
 \nabla^2 =
@@ -514,7 +513,7 @@ $$
 
 <br>
 
-It acts by highlighting areas with rapid change in image gradients. This happens twice around each edge pixel; moving from a region with small gradients (non-edge pixels) to an area with high gradients (edge pixels) and back again (non-edge pixels). Depending on the relative pixel intensities on either side of an edge, the Laplacian yields two edges of pixels with opposite signs (*Figure )
+It acts by highlighting areas with rapid change in image gradients. This happens twice around each edge pixel; moving from a region with small gradients (non-edge pixels) to an area with high gradients (edge pixels) and back again (non-edge pixels). Depending on the relative pixel intensities on either side of an edge, the Laplacian yields two edges of pixels with opposite signs (*Figure 11a*).
 
 <div>
 <table class="table_align" style="width:100%">
@@ -547,7 +546,7 @@ To visualise this point better, consider the case in *Figure 12*. It visualises 
 [edge_aware_concept]: assets/img/tsdf/edge_aware_concept.png
 
 
-In *Figure 12a*, three of the four bounding-box pixels lie on an edge. The top-left pixel $$p_1$$ belongs to the edge of object $$A$$ while the other two pixels belong to that of object $$B$$. To detect this and assign the pixel to $$B$$, we threshold the difference between the median values of the pixels and assign $$p$$ to the average of $$p2$$ and $$p3$$. We can do this because the pixel values at {$$p_1, p_2, p_3, p_4$$} have spatial meaning and therefore their difference indicates the distance between them. We can therefore decide for instance, that edge pixeles that are withing 1 $$cm$$ belong to the same object.
+In *Figure 12a*, three of the four bounding-box pixels lie on an edge. The top-left pixel $$p_1$$ belongs to the edge of object $$A$$ while the other two pixels belong to that of object $$B$$. To detect this and assign the pixel to $$B$$, we threshold the difference between the median values of the pixels and assign $$p$$ to the average of $$p2$$ and $$p3$$. We can do this because the pixel values at {$$p_1, p_2, p_3, p_4$$} have spatial meaning and therefore their difference indicates the distance between them. We can therefore decide for instance, that edge pixeles that are within 2 $$cm$$ of each other belong to the same object.
 
 A second edge case is where a horizontal or vertical edge boundary divides the bounding-box equally (*Figure 12c-d*). In this case, we finally give up on interpolation (because there isn’t really a correct one!) and assign $$p$$ to its nearest neighbour.
 
@@ -573,7 +572,7 @@ void edgeAwareRemap(InputArray _src, OutputArray _dst, InputArray _cmap)
     Mat_<float> yMat(1, 2, CV_32F), xMat(2, 1, CV_32F), F(2, 2, CV_32F);
 
     Laplacian(src, laplacianImage, CV_32F, 1);
-    edgeThreshold = 400;
+    edgeThreshold = 100;
 
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
@@ -659,7 +658,7 @@ void edgeAwareRemap(InputArray _src, OutputArray _dst, InputArray _cmap)
 
 
 
-The results of applying such a remapping operation are visualised in (*Figure 13b*). In comparison, the nearest neighbour interpolation (*Figure13c*) smoothed with a median filter has pronounced distortions at the edges (*Figure13d*) when compared to the edge-aware interpolation. The median filter dialates already distorted edges, creating spurious data.
+The results of applying such a remapping operation are visualised in (*Figure 13b*). In comparison, the nearest neighbour interpolation (*Figure13c*) smoothed with a median filter has pronounced distortions at the edges (*Figure13d*) when compared to the edge-aware interpolation. The median filter also dialates already distorted edges, creating spurious data.
 
 Our custom interpolation on the other-hand strikes a balance between edge-preserving warping, smoothing and accurate interpolation.
 
@@ -695,14 +694,13 @@ This is ofcourse not the only way you could do this. Here we've approximated the
 
 *Practical Considerations:*
 
-- real returns will depend on the type of image (big features or relatively smooth)
-- might want to benchmark more with smaller objects (where it is likely to be more useful)
+- The effects of using this kind of approach will depend on the structure of the scene being imaged (small and rapidly varying features vs big relatively smooth ones).
 
 ## Applications
 
-While there have been leaps of progress in 2D computer vision, 3D vision has lagged behind mostly due to a lack of tools to deal with its geometric nature. Yet, the world is 3D and there are obvious advantages of treating it as such.
+While there have been leaps of progress in 2D computer vision, 3D vision has lagged behind, partly due to a lack of tools to deal with its geometric nature. Yet, the world is 3D and there are obvious advantages in treating it as such.
 
-[Geometric Deep Learning](http://geometricdeeplearning.com/) has a list of the state of the art methods in deep-learning on graphs, a few of which include some pretty impressive work on 3D vision. here are a few examples on the exciting use of 3D vision:
+[Geometric Deep Learning](http://geometricdeeplearning.com/) has a list of the state of the art methods in deep-learning on graphs, a few of which include some pretty impressive work on 3D vision. Here are a few examples on the exciting use of 3D vision:
 
 - Shape segmentation with [SyncSpecCNN](https://arxiv.org/pdf/1612.00606.pdf):
 
