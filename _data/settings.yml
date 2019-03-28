@@ -1,10 +1,10 @@
 # Change 'comments' to true for Disqus comments
 disqus:
-  comments: false
-  disqus_shortname: ''
+  comments: true
+  disqus_shortname: 'Noorvir Aulakh'
 
 # If you are not using Google Analytics, please change 'google-ID' to an empty string
-google-ID: ''
+google-ID: 'UA-137180844-1'
 
 menu:
 - {name: 'About', path: 'menu', url: 'about.html'}
