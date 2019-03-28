@@ -17,4 +17,4 @@ I started this blog primarily as a tool to collect my thoughts (both technical a
 
 ## What the F is "Euclidigoras"?
 
-Due to my limited imagination and all round bad humour, I couldn't think of anything better to name my blog. Euclid was a pretty awesome geometer and Pythagoras' Theorem is the one mathematical formula that I can recall without fail at any given time. Since I'm mainly interested in geometric computer vision and I like sounding smart; hence Euclidigoras!
+Due to my limited imagination and all round bad humour, I couldn't think of anything better to name my blog. Euclid was a pretty awesome geometer and Pythagoras' Theorem is the one mathematical formula that I can recall without fail at any given time. Since I'm mainly interested in geometric computer vision and I like sounding smart: Euclidigoras!

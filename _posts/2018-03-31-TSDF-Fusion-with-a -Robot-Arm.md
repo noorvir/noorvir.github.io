@@ -2,6 +2,7 @@
 layout: post
 title: TSDF-Fusion with a  Robot Arm
 # image: tsdf/3D_recon.png
+comments: true
 ---
 
 
